@@ -13,28 +13,12 @@ blogRouter.get( "/", async ( request, response ) =>
 blogRouter.post( "/", async ( request, response ) =>
 {
 
-
-    if ( !request.token )
+    if ( !request.user )
     {
         return response.status( 401 ).send( { error: 'unauthorized' } )
     }
-    let userInfo;
-    try
-    {
-        userInfo = jwt.verify( request.token, process.env.SECRET )
-    }
-    catch ( err )
-    {
-        error( err )
-        return response.status( 401 ).send( { error: 'invalid token' } )
-    }
 
-    let user = await User.findOne( { _id: userInfo.id } )
-
-    if ( !user )
-    {
-        return response.status( 401 ).send( { error: 'invalid user' } )
-    }
+    let user = request.user
 
     if ( !request.body.url || !request.body.title )
     {
@@ -58,27 +42,12 @@ blogRouter.delete( "/:id", async ( req, res, next ) =>
 {
     try
     {
-        if ( !req.token )
+        if ( !req.user )
         {
             return res.status( 401 ).send( { error: 'unauthorized' } )
         }
-        let userInfo;
-        try
-        {
-            userInfo = jwt.verify( req.token, process.env.SECRET )
-        }
-        catch ( err )
-        {
-            error( err )
-            return res.status( 401 ).send( { error: 'invalid token' } )
-        }
 
-        let user = await User.findOne( { _id: userInfo.id } )
-
-        if ( !user )
-        {
-            return res.status( 401 ).send( { error: 'invalid user' } )
-        }
+        let user = req.user
 
         let blogToDelete = await Blog.findOne( { _id: req.params.id } )
         info( blogToDelete )
