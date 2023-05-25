@@ -9,6 +9,12 @@ notesRouter.get( "/", async ( request, response ) =>
 
 notesRouter.post( "/", async ( request, response ) =>
 {
+
+    if ( !request.body.url || !request.body.title )
+    {
+        response.status( 400 ).send();
+    }
+
     const blog = new Blog( request.body );
 
     let result = await blog.save()
