@@ -1,14 +1,14 @@
-const notesRouter = require( "express" ).Router();
+const blogRouter = require( "express" ).Router();
 const Blog = require( "../models/blog" );
 const { info, error } = require( "../utils/logger" )
 
-notesRouter.get( "/", async ( request, response ) =>
+blogRouter.get( "/", async ( request, response ) =>
 {
-    let blogs = await Blog.find( {} )
+    let blogs = await Blog.find( {} ).populate( 'user', { username: 1, name: 1 } )
     response.json( blogs );
 } );
 
-notesRouter.post( "/", async ( request, response ) =>
+blogRouter.post( "/", async ( request, response ) =>
 {
 
     if ( !request.body.url || !request.body.title )
@@ -23,7 +23,7 @@ notesRouter.post( "/", async ( request, response ) =>
 } );
 
 
-notesRouter.delete( "/:id", async ( req, res, next ) =>
+blogRouter.delete( "/:id", async ( req, res, next ) =>
 {
     try
     {
@@ -41,7 +41,7 @@ notesRouter.delete( "/:id", async ( req, res, next ) =>
     }
 } )
 
-notesRouter.put( "/:id", async ( req, res, next ) =>
+blogRouter.put( "/:id", async ( req, res, next ) =>
 {
     try
     {
@@ -60,4 +60,4 @@ notesRouter.put( "/:id", async ( req, res, next ) =>
     }
 } )
 
-module.exports = notesRouter
+module.exports = blogRouter

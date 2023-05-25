@@ -32,7 +32,7 @@ userRouter.get( "/", async ( req, res, next ) =>
 {
     try
     {
-        let allUsers = await User.find( {} )
+        let allUsers = await User.find( {} ).populate( 'blogs', { title: 1, author: 1, likes: 1, url: 1 } )
         res.send( allUsers )
     }
     catch ( err )
