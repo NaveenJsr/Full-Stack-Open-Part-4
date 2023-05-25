@@ -23,7 +23,7 @@ notesRouter.post( "/", async ( request, response ) =>
 } );
 
 
-notesRouter.delete( "/:id", async ( req, res ) =>
+notesRouter.delete( "/:id", async ( req, res, next ) =>
 {
     try
     {
@@ -37,9 +37,27 @@ notesRouter.delete( "/:id", async ( req, res ) =>
     catch ( err )
     {
         error( err )
-        res.status( 400 ).send()
+        next( err )
     }
 } )
 
+notesRouter.put( "/:id", async ( req, res, next ) =>
+{
+    try
+    {
+        let payload = req.body
+        let newBlog = await Blog.findOneAndUpdate( { _id: req.params.id }, payload, { new: true } )
+        if ( !newBlog )
+        {
+            return res.status( 404 ).send()
+        }
+        res.send( newBlog )
+    }
+    catch ( err )
+    {
+        error( err )
+        next( err )
+    }
+} )
 
 module.exports = notesRouter
