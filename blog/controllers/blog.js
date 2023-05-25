@@ -1,25 +1,19 @@
-const config = require( "./utils/config" )
-const express = require( 'express' )
-const app = express()
-const cors = require( 'cors' )
-const { info, error } = require( "./utils/logger" )
-const blogRouter = require( "./controllers/blog" )
+const notesRouter = require( "express" ).Router();
+const Blog = require( "../models/blog" );
 
-//Database
-const mongoose = require( 'mongoose' )
-mongoose.set( 'strictQuery', false )
-
-
-mongoose.connect( config.MONGODB_URI, () =>
+notesRouter.get( "/", async ( request, response ) =>
 {
-    info( "DB connected " )
-} )
+    let blogs = await Blog.find( {} )
+    response.json( blogs );
+} );
 
-//Middleware
-app.use( cors() )
-app.use( express.json() )
+notesRouter.post( "/", async ( request, response ) =>
+{
+    const blog = new Blog( request.body );
 
-//Route
-app.use( "/api/blogs", blogRouter )
+    let result = await blog.save()
+    response.status( 201 ).json( result );
+} );
 
-module.exports = app
+
+module.exports = notesRouter
